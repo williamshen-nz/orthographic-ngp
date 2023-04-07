@@ -9,22 +9,12 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 import argparse
-import os
-import pickle
+
 import commentjson as json
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-import sys
-import time
-
-from common import *
-from scenes import scenes_nerf, scenes_image, scenes_sdf, scenes_volume, setup_colored_sdf
-
-from tqdm import tqdm
-
 import pyngp as ngp  # noqa
+from common import *
+from scenes import scenes_image, scenes_nerf, scenes_sdf, scenes_volume, setup_colored_sdf
+from tqdm import tqdm
 
 
 def parse_args():
