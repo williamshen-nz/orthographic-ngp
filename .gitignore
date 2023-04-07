@@ -14,3 +14,5 @@ __pycache__
 imgui.ini
 data/
 output/
+cmake-build-debug/
+.idea/
