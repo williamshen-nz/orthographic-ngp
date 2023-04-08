@@ -331,6 +331,15 @@ PYBIND11_MODULE(pyngp, m) {
 			"`thresh` is the density threshold; use 0 for SDF; 2.5 works well for NeRF. "
 			"If the aabb parameter specifies an inside-out (\"empty\") box (default), the current render_aabb bounding box is used."
 		)
+        .def("set_crop_aabb", &Testbed::set_crop_aabb,
+            py::arg("min_x") = 0.0f,
+            py::arg("min_y") = 0.0f,
+            py::arg("min_z") = 0.0f,
+            py::arg("max_x") = 1.0f,
+            py::arg("max_y") = 1.0f,
+            py::arg("max_z") = 1.0f,
+            "Set the crop aabb."
+         )
 		;
 
 	// Interesting members.

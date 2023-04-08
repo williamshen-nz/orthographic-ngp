@@ -257,6 +257,17 @@ void Testbed::reset_camera() {
 	reset_accumulation();
 }
 
+void Testbed::set_crop_aabb(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z) {
+    m_render_aabb.min = Vector3f(min_x, min_y, min_z);
+    m_render_aabb.max = Vector3f(max_x, max_y, max_z);
+
+    std::cout << "Set m_render_aabb.min=[" << m_render_aabb.min.x() << "," <<
+        m_render_aabb.min.y() << "," << m_render_aabb.min.z() << "]" << std::endl;
+    std::cout << "Set m_render_aabb.max=[" << m_render_aabb.max.x() << "," <<
+        m_render_aabb.max.y() << "," << m_render_aabb.max.z() << "]" << std::endl;
+}
+
+
 void Testbed::set_train(bool mtrain) {
 	if (m_train && !mtrain && m_max_level_rand_training) {
 		set_max_level(1.f);

@@ -48,6 +48,9 @@ def parse_args():
         "--network", default="", help="Path to the network config. Uses the scene's default if unspecified."
     )
 
+    parser.add_argument("--crop_aabb_min", default=(0, 0, 0), type=float, nargs=3, help="Crop the scene to this AABB.")
+    parser.add_argument("--crop_aabb_max", default=(1, 1, 1), type=float, nargs=3, help="Crop the scene to this AABB.")
+
     parser.add_argument(
         "--load_snapshot", default="", help="Load this snapshot before training. recommended extension: .msgpack"
     )
@@ -104,6 +107,9 @@ def parse_args():
     parser.add_argument("--sharpen", default=0, help="Set amount of sharpening applied to NeRF training images.")
 
     args = parser.parse_args()
+    assert (
+        len(args.crop_aabb_min) == 3 and len(args.crop_aabb_max) == 3
+    ), "Must specify 3 values for --crop_aabb_min and --crop_aabb_max"
     return args
 
 
@@ -211,6 +217,16 @@ if __name__ == "__main__":
         # fixed white bg. We prefer training on random BG colors.
         # testbed.background_color = [1.0, 1.0, 1.0, 1.0]
         # testbed.nerf.training.random_bg_color = False
+
+    # Set crop aabb
+    testbed.set_crop_aabb(
+        min_x=args.crop_aabb_min[0],
+        min_y=args.crop_aabb_min[1],
+        min_z=args.crop_aabb_min[2],
+        max_x=args.crop_aabb_max[0],
+        max_y=args.crop_aabb_max[1],
+        max_z=args.crop_aabb_max[2],
+    )
 
     old_training_step = 0
     n_steps = args.n_steps
