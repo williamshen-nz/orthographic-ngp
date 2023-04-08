@@ -11,10 +11,12 @@
 import argparse
 
 import commentjson as json
-import pyngp as ngp  # noqa
 from common import *
 from scenes import scenes_image, scenes_nerf, scenes_sdf, scenes_volume, setup_colored_sdf
 from tqdm import tqdm
+
+# Important: this import needs to be last
+import pyngp as ngp  # noqa, isort: skip
 
 
 def parse_args():
