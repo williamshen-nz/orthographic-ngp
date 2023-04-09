@@ -372,11 +372,6 @@ if __name__ == "__main__":
                 f = ref_transforms["frames"][int(idx)]
                 cam_matrix = f["transform_matrix"]
                 testbed.set_nerf_camera_matrix(np.matrix(cam_matrix)[:-1, :])
-                outname = os.path.join(args.screenshot_dir, os.path.basename(f["file_path"]))
-
-                # Some NeRF datasets lack the .png suffix in the dataset metadata
-                if not os.path.splitext(outname)[1]:
-                    outname = outname + ".png"
 
                 if args.nerfporter:
                     og_background_color = list(testbed.background_color)
@@ -407,6 +402,10 @@ if __name__ == "__main__":
                     np.save(nerfporter_depth_path, depth)
                     testbed.background_color = og_background_color
                 else:
+                    outname = os.path.join(args.screenshot_dir, os.path.basename(f["file_path"]))
+                    # Some NeRF datasets lack the .png suffix in the dataset metadata
+                    if not os.path.splitext(outname)[1]:
+                        outname = outname + ".png"
                     testbed.render_mode = ngp.RenderMode.Shade
                     print(f"Rendering {outname}")
                     image = testbed.render(
