@@ -107,6 +107,7 @@ def parse_args():
     )
     parser.add_argument("--n_steps", type=int, default=-1, help="Number of steps to train for before quitting.")
 
+    parser.add_argument("--optimize_extrinsics", action="store_true", help="Optimize extrinsics during training.")
     parser.add_argument("--sharpen", default=0, help="Set amount of sharpening applied to NeRF training images.")
 
     args = parser.parse_args()
@@ -156,6 +157,8 @@ if __name__ == "__main__":
         network = os.path.join(configs_dir, network)
 
     testbed = ngp.Testbed(mode)
+    if args.optimize_extrinsics:
+        testbed.nerf.training.optimize_extrinsics = True
     testbed.nerf.sharpen = float(args.sharpen)
 
     if args.mode == "sdf":
