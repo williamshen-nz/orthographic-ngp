@@ -403,6 +403,14 @@ if __name__ == "__main__":
                         True,
                     )
                     depth = depth[..., 0]  # Just use the first channel.
+
+                    # For things outside bbox, just truncate to 0.0
+                    # To determine bbox, we have RGB is all white and depth is 1.0
+                    # TODO: this doesn't work an object is indeed white and its depth is 1.0, but that's an edge case
+                    rgb = (image[..., :3] * 255).astype(np.uint8)
+                    mask = np.all(rgb == 255, axis=2) & (depth == 1.0)
+                    depth[mask] = 0.0
+
                     os.makedirs(os.path.dirname(nerfporter_depth_path), exist_ok=True)
                     np.save(nerfporter_depth_path, depth)
                     testbed.background_color = og_background_color
