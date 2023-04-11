@@ -53,6 +53,7 @@ def parse_args():
 
     parser.add_argument("--crop_aabb_min", default=(0, 0, 0), type=float, nargs=3, help="Crop the scene to this AABB.")
     parser.add_argument("--crop_aabb_max", default=(1, 1, 1), type=float, nargs=3, help="Crop the scene to this AABB.")
+    parser.add_argument("--perspective", action="store_true", help="Use perspective camera instead of orthographic.")
 
     parser.add_argument(
         "--load_snapshot", default="", help="Load this snapshot before training. recommended extension: .msgpack"
@@ -196,6 +197,7 @@ if __name__ == "__main__":
     testbed.shall_train = args.train if args.gui else True
 
     testbed.nerf.render_with_camera_distortion = True
+    testbed.nerf.render_with_orthographic = not args.perspective
 
     network_stem = os.path.splitext(os.path.basename(network))[0]
     if args.mode == "sdf":
