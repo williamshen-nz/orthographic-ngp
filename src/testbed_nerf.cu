@@ -1599,7 +1599,8 @@ __global__ void init_rays_with_payload_kernel_nerf(
 	Array4f* __restrict__ framebuffer,
 	const float* __restrict__ distortion_data,
 	const Vector2i distortion_resolution,
-	ERenderMode render_mode
+	ERenderMode render_mode,
+    bool render_with_orthographic
 ) {
 	uint32_t x = threadIdx.x + blockDim.x * blockIdx.x;
 	uint32_t y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -1615,30 +1616,34 @@ __global__ void init_rays_with_payload_kernel_nerf(
 	}
 
 	float ray_time = ld_random_val(spp, idx*72239731);
-	Ray ray = pixel_to_ray_orthographic(
-		spp,
-		{x, y},
-		resolution,
-		focal_length,
-		camera_matrix0 * ray_time + camera_matrix1 * (1.f - ray_time),
-		screen_center,
-		plane_z,
-		dof
-	);
-	// Ray ray = pixel_to_ray(
-	// 	spp,
-	// 	{x, y},
-	// 	resolution,
-	// 	focal_length,
-	// 	camera_matrix0 * ray_time + camera_matrix1 * (1.f - ray_time),
-	// 	screen_center,
-	// 	snap_to_pixel_centers,
-	// 	plane_z,
-	// 	dof,
-	// 	camera_distortion,
-	// 	distortion_data,
-	// 	distortion_resolution
-	// );
+    Ray ray;
+    if (render_with_orthographic) {
+        ray = pixel_to_ray_orthographic(
+                spp,
+                {x, y},
+                resolution,
+                focal_length,
+                camera_matrix0 * ray_time + camera_matrix1 * (1.f - ray_time),
+                screen_center,
+                plane_z,
+                dof
+        );
+    } else {
+        ray = pixel_to_ray(
+            spp,
+            {x, y},
+            resolution,
+            focal_length,
+            camera_matrix0 * ray_time + camera_matrix1 * (1.f - ray_time),
+            screen_center,
+            snap_to_pixel_centers,
+            plane_z,
+            dof,
+            camera_distortion,
+            distortion_data,
+            distortion_resolution
+        );
+    }
 
 	if (plane_z < 0) {
 		float n = ray.d.norm();
@@ -1774,7 +1779,8 @@ void Testbed::NerfTracer::init_rays_from_camera(
 	int show_accel,
 	float cone_angle_constant,
 	ERenderMode render_mode,
-	cudaStream_t stream
+	cudaStream_t stream,
+    bool render_with_orthographic
 ) {
 	// Make sure we have enough memory reserved to render at the requested resolution
 	size_t n_pixels = (size_t)resolution.x() * resolution.y();
@@ -1800,7 +1806,8 @@ void Testbed::NerfTracer::init_rays_from_camera(
 		frame_buffer,
 		distortion_data,
 		distortion_resolution,
-		render_mode
+		render_mode,
+        render_with_orthographic
 	);
 
 	m_n_rays_initialized = resolution.x() * resolution.y();
@@ -1993,7 +2000,8 @@ void Testbed::render_nerf(CudaRenderBuffer& render_buffer, const Vector2i& max_r
 		m_nerf.show_accel,
 		m_nerf.cone_angle_constant,
 		render_mode,
-		stream
+		stream,
+        m_nerf.render_with_orthographic
 	);
 
 	uint32_t n_hit;

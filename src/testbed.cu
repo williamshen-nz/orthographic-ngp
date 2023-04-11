@@ -385,6 +385,7 @@ void Testbed::imgui() {
 		if (m_testbed_mode == ETestbedMode::Nerf) {
 			if (ImGui::TreeNode("NeRF rendering options")) {
 				accum_reset |= ImGui::Checkbox("Apply lens distortion", &m_nerf.render_with_camera_distortion);
+                ImGui::Checkbox("Orthographic", &m_nerf.render_with_orthographic);
 				ImGui::TreePop();
 			}
 

@@ -134,8 +134,9 @@ public:
 			int show_accel,
 			float cone_angle_constant,
 			ERenderMode render_mode,
-			cudaStream_t stream
-		);
+			cudaStream_t stream,
+            bool render_with_orthographic
+        );
 
 		uint32_t trace(
 			NerfNetwork<precision_t>& network,
@@ -533,6 +534,7 @@ public:
 
 		bool visualize_cameras = false;
 		bool render_with_camera_distortion = false;
+        bool render_with_orthographic = true;
 
 		float rendering_min_alpha = 0.01f;
 	} m_nerf;
