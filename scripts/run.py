@@ -44,7 +44,11 @@ def parse_args():
     parser.add_argument("--nerfporter_color_dir", default="", help="Which directory to save rendered RGB.")
     parser.add_argument("--nerfporter_depth_dir", default="", help="Which directory to save rendered depth.")
     parser.add_argument(
-        "--nerfporter_bg_color", default=(1, 1, 1, 1), type=float, nargs=4, help="Background color for NeRF-porter."
+        "--nerfporter_bg_color",
+        default=(0.0, 0.0, 0.0, 1.0),
+        type=float,
+        nargs=4,
+        help="Background color for NeRF-porter.",
     )
 
     parser.add_argument(
