@@ -50,6 +50,7 @@ def parse_args():
         nargs=4,
         help="Background color for NeRF-porter.",
     )
+    parser.add_argument("--nerfporter_zoom", default=1.0, type=float, help="Zoom for NeRF-porter.")
 
     parser.add_argument(
         "--network", default="", help="Path to the network config. Uses the scene's default if unspecified."
@@ -385,6 +386,8 @@ if __name__ == "__main__":
                 if args.nerfporter:
                     og_background_color = list(testbed.background_color)
                     testbed.background_color = args.nerfporter_bg_color
+                    og_zoom = float(testbed.zoom)
+                    testbed.zoom = args.nerfporter_zoom
                     testbed.render_mode = ngp.RenderMode.Shade
                     nerfporter_color_path = os.path.join(args.nerfporter_color_dir, f"{idx:06}.png")
                     # print(f"Rendering {nerfporter_color_path}")
@@ -418,6 +421,7 @@ if __name__ == "__main__":
                     os.makedirs(os.path.dirname(nerfporter_depth_path), exist_ok=True)
                     np.save(nerfporter_depth_path, depth)
                     testbed.background_color = og_background_color
+                    testbed.zoom = og_zoom
                 else:
                     outname = os.path.join(args.screenshot_dir, os.path.basename(f["file_path"]))
                     # Some NeRF datasets lack the .png suffix in the dataset metadata
