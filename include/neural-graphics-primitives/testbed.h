@@ -287,6 +287,7 @@ public:
 	void train(uint32_t n_training_steps, uint32_t batch_size);
 	Eigen::Vector2f calc_focal_length(const Eigen::Vector2i& resolution, int fov_axis, float zoom) const ;
 	Eigen::Vector2f render_screen_center() const ;
+    Eigen::Vector2f render_focal_length(int width, int height) const ;
 	void optimise_mesh_step(uint32_t N_STEPS);
 	void compute_mesh_vertex_colors();
 	tcnn::GPUMemory<float> get_density_on_grid(Eigen::Vector3i res3d, const BoundingBox& aabb);

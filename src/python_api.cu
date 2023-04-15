@@ -340,6 +340,11 @@ PYBIND11_MODULE(pyngp, m) {
             py::arg("max_z") = 1.0f,
             "Set the crop aabb."
          )
+         .def("render_screen_center", &Testbed::render_screen_center, "Get the screen center for the render.")
+         .def("render_focal_length", &Testbed::render_focal_length,
+            py::arg("width"),
+            py::arg("height"),
+            "Get the focal length for the render.")
 		;
 
 	// Interesting members.

@@ -378,6 +378,9 @@ if __name__ == "__main__":
             if not args.screenshot_frames:
                 args.screenshot_frames = range(len(ref_transforms["frames"]))
 
+            nerfporter_screen_centers = set()
+            nerfporter_focal_lengths = set()
+
             for idx in tqdm(args.screenshot_frames, desc="Rendering screenshot frames"):
                 f = ref_transforms["frames"][int(idx)]
                 cam_matrix = f["transform_matrix"]
@@ -403,12 +406,16 @@ if __name__ == "__main__":
                     testbed.render_mode = ngp.RenderMode.Depth
                     nerfporter_depth_path = os.path.join(args.nerfporter_depth_dir, f"{idx:06}.npy")
                     # print(f"Rendering {nerfporter_depth_path}")
+                    width = args.width or int(ref_transforms["w"])
+                    height = args.height or int(ref_transforms["h"])
                     depth = testbed.render(
-                        args.width or int(ref_transforms["w"]),
-                        args.height or int(ref_transforms["h"]),
+                        width,
+                        height,
                         args.screenshot_spp,
                         True,
                     )
+                    nerfporter_screen_centers.add(tuple(testbed.render_screen_center().tolist()))
+                    nerfporter_focal_lengths.add(tuple(testbed.render_focal_length(width, height).tolist()))
                     depth = depth[..., 0]  # Just use the first channel.
 
                     # For things outside bbox, just truncate to 0.0
@@ -452,6 +459,18 @@ if __name__ == "__main__":
                     np.save(outname, depth)
 
                     # depths.append(image[..., 0])  # Just use the first channel.
+
+            # Screen center and focal length should be the same for all frames
+            if args.nerfporter:
+                assert len(nerfporter_screen_centers) == 1
+                assert len(nerfporter_focal_lengths) == 1
+
+                # Overwrite ref_transforms with additional info
+                ref_transforms["render_screen_center"] = nerfporter_screen_centers.pop()
+                ref_transforms["render_focal_length"] = nerfporter_focal_lengths.pop()
+                with open(args.screenshot_transforms, "w") as f:
+                    json.dump(ref_transforms, f, indent=4)
+                print(f"Saved render info to {args.screenshot_transforms}")
 
             # if args.depth:
             # 	import tensorflow as tf

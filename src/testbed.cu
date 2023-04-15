@@ -1880,6 +1880,11 @@ Vector2f Testbed::render_screen_center() const {
 	return {(0.5f-screen_center.x())*m_zoom + 0.5f, (0.5-screen_center.y())*m_zoom + 0.5f};
 }
 
+Vector2f Testbed::render_focal_length(int width, int height) const {
+    Vector2i resolution = Vector2i(width, height);
+    return calc_focal_length(resolution, m_fov_axis, m_zoom);
+}
+
 void Testbed::render_frame(const Matrix<float, 3, 4>& camera_matrix0, const Matrix<float, 3, 4>& camera_matrix1, CudaRenderBuffer& render_buffer, bool to_srgb) {
 	Vector2i max_res = m_window_res.cwiseMax(render_buffer.resolution());
 
